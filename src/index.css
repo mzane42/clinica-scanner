@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 174 62% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 217 33% 22%;
+    --input: 217 33% 20%;
+    --ring: 160 84% 39%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    overscroll-behavior: none;
+  }
+
+  /* Prevent pull-to-refresh on mobile */
+  body {
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100dvh;
+    overflow: auto;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-muted hover:bg-muted/80 text-foreground font-medium px-6 py-3 rounded-xl transition-all duration-200 active:scale-95;
+  }
+
+  .btn-danger {
+    @apply bg-destructive hover:bg-destructive/90 text-destructive-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-input border-2 border-border rounded-xl text-foreground placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+
+  .card {
+    @apply bg-card rounded-2xl border border-border;
+  }
+
+  .stat-card {
+    @apply bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl;
+  }
+
+  .gradient-header {
+    @apply bg-gradient-to-r from-emerald-600 to-teal-600;
+  }
+}
+
+@layer utilities {
+  /* Scanner viewfinder styling */
+  .scanner-viewfinder {
+    position: relative;
+  }
+
+  .scanner-viewfinder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 3px solid rgba(34, 197, 94, 0.5);
+    border-radius: 1rem;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Touch-friendly tap targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Safe area padding for notched devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* html5-qrcode overrides for better mobile experience */
+#qr-reader {
+  border: none !important;
+  width: 100% !important;
+}
+
+#qr-reader video {
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+#qr-reader__scan_region {
+  min-height: 300px;
+}
+
+#qr-reader__dashboard {
+  display: none !important;
+}
