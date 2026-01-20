@@ -11,6 +11,7 @@ interface QRScannerProps {
 export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>('');
   const videoRef = useRef<HTMLVideoElement>(null);
   const scannerRef = useRef<QrScanner | null>(null);
   const lastScanRef = useRef<string>('');
@@ -39,59 +40,80 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
   );
 
   const startScanning = useCallback(async () => {
-    if (!videoRef.current) return;
+    if (!videoRef.current) {
+      setDebugInfo('No video element');
+      return;
+    }
 
     try {
       setError(null);
+      setDebugInfo('Checking camera...');
 
       // Check if camera is available
       const hasCamera = await QrScanner.hasCamera();
+      setDebugInfo(`Has camera: ${hasCamera}`);
+
       if (!hasCamera) {
         setError('Aucune caméra détectée sur cet appareil.');
         return;
       }
 
-      if (!scannerRef.current) {
-        scannerRef.current = new QrScanner(videoRef.current, handleScan, {
+      // List available cameras for debugging
+      const cameras = await QrScanner.listCameras(true);
+      setDebugInfo(`Found ${cameras.length} cameras: ${cameras.map(c => c.label).join(', ')}`);
+
+      // Destroy previous scanner if exists
+      if (scannerRef.current) {
+        scannerRef.current.destroy();
+        scannerRef.current = null;
+      }
+
+      setDebugInfo('Creating scanner...');
+
+      scannerRef.current = new QrScanner(
+        videoRef.current,
+        handleScan,
+        {
           preferredCamera: 'environment',
           highlightScanRegion: false,
           highlightCodeOutline: false,
-          maxScansPerSecond: 15,
-          calculateScanRegion: (video) => {
-            // Square scan region in center (matching previous 250x250 qrbox)
-            const smallerDimension = Math.min(video.videoWidth, video.videoHeight);
-            const scanSize = Math.floor(smallerDimension * 0.7);
-            const x = Math.floor((video.videoWidth - scanSize) / 2);
-            const y = Math.floor((video.videoHeight - scanSize) / 2);
-            return {
-              x,
-              y,
-              width: scanSize,
-              height: scanSize,
-            };
-          },
-        });
+          maxScansPerSecond: 10,
+        }
+      );
+
+      setDebugInfo('Starting scanner...');
+      await scannerRef.current.start();
+
+      // Override qr-scanner's inline styles that hide the video
+      if (videoRef.current) {
+        videoRef.current.style.width = '100%';
+        videoRef.current.style.height = '100%';
+        videoRef.current.style.opacity = '1';
+        videoRef.current.style.transform = 'none';
+        videoRef.current.style.position = 'absolute';
+        videoRef.current.style.top = '0';
+        videoRef.current.style.left = '0';
       }
 
-      await scannerRef.current.start();
+      setDebugInfo('');
       setIsScanning(true);
     } catch (err) {
       console.error('Camera error:', err);
+      setDebugInfo(`Error: ${err instanceof Error ? err.message : String(err)}`);
       setError(
         "Impossible d'accéder à la caméra. Vérifiez les permissions dans les paramètres."
       );
     }
   }, [handleScan]);
 
-  const stopScanning = useCallback(async () => {
+  const stopScanning = useCallback(() => {
     if (scannerRef.current) {
-      try {
-        scannerRef.current.stop();
-      } catch {
-        // Ignore stop errors
-      }
+      scannerRef.current.stop();
+      scannerRef.current.destroy();
+      scannerRef.current = null;
     }
     setIsScanning(false);
+    setDebugInfo('');
   }, []);
 
   // Cleanup on unmount
@@ -121,12 +143,18 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
     <div className="space-y-4">
       {/* Scanner Container */}
       <div className="relative bg-black rounded-2xl overflow-hidden aspect-square max-w-md mx-auto">
+        {/* Video element - always in DOM */}
         <video
           ref={videoRef}
-          className={cn(
-            'w-full h-full object-cover',
-            !isScanning && 'hidden'
-          )}
+          muted
+          autoPlay
+          playsInline
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: isScanning ? 'block' : 'none',
+          }}
         />
 
         {/* Placeholder when camera is off */}
@@ -158,6 +186,13 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
           </div>
         )}
       </div>
+
+      {/* Debug Info */}
+      {debugInfo && (
+        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-center">
+          <p className="text-xs text-blue-400 font-mono">{debugInfo}</p>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
