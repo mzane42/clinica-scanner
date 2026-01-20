@@ -11,7 +11,6 @@ interface QRScannerProps {
 export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string>('');
   const videoRef = useRef<HTMLVideoElement>(null);
   const scannerRef = useRef<QrScanner | null>(null);
   const lastScanRef = useRef<string>('');
@@ -40,35 +39,22 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
   );
 
   const startScanning = useCallback(async () => {
-    if (!videoRef.current) {
-      setDebugInfo('No video element');
-      return;
-    }
+    if (!videoRef.current) return;
 
     try {
       setError(null);
-      setDebugInfo('Checking camera...');
 
-      // Check if camera is available
       const hasCamera = await QrScanner.hasCamera();
-      setDebugInfo(`Has camera: ${hasCamera}`);
-
       if (!hasCamera) {
         setError('Aucune caméra détectée sur cet appareil.');
         return;
       }
-
-      // List available cameras for debugging
-      const cameras = await QrScanner.listCameras(true);
-      setDebugInfo(`Found ${cameras.length} cameras: ${cameras.map(c => c.label).join(', ')}`);
 
       // Destroy previous scanner if exists
       if (scannerRef.current) {
         scannerRef.current.destroy();
         scannerRef.current = null;
       }
-
-      setDebugInfo('Creating scanner...');
 
       scannerRef.current = new QrScanner(
         videoRef.current,
@@ -81,7 +67,6 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
         }
       );
 
-      setDebugInfo('Starting scanner...');
       await scannerRef.current.start();
 
       // Override qr-scanner's inline styles that hide the video
@@ -95,11 +80,9 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
         videoRef.current.style.left = '0';
       }
 
-      setDebugInfo('');
       setIsScanning(true);
     } catch (err) {
       console.error('Camera error:', err);
-      setDebugInfo(`Error: ${err instanceof Error ? err.message : String(err)}`);
       setError(
         "Impossible d'accéder à la caméra. Vérifiez les permissions dans les paramètres."
       );
@@ -113,7 +96,6 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
       scannerRef.current = null;
     }
     setIsScanning(false);
-    setDebugInfo('');
   }, []);
 
   // Cleanup on unmount
@@ -186,13 +168,6 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
           </div>
         )}
       </div>
-
-      {/* Debug Info */}
-      {debugInfo && (
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-center">
-          <p className="text-xs text-blue-400 font-mono">{debugInfo}</p>
-        </div>
-      )}
 
       {/* Error Message */}
       {error && (
