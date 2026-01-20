@@ -20,13 +20,16 @@ export function QRScanner({ onScan, isProcessing }: QRScannerProps) {
       setError(null);
 
       if (!scannerRef.current) {
-        scannerRef.current = new Html5Qrcode('qr-reader');
+        scannerRef.current = new Html5Qrcode('qr-reader', {
+          verbose: false,
+          useBarCodeDetectorIfSupported: true,
+        });
       }
 
       await scannerRef.current.start(
         { facingMode: 'environment' },
         {
-          fps: 10,
+          fps: 15,
           qrbox: { width: 250, height: 250 },
           aspectRatio: 1,
         },

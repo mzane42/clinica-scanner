@@ -20,14 +20,21 @@ export function StatsHeader({
     <header className="gradient-header px-4 py-4 safe-area-top">
       <div className="flex items-center justify-between">
         {/* Title */}
-        <div>
-          <h1 className="text-xl font-bold text-white font-display">CLINICA  EXPO 2026</h1>
-          <p className="text-emerald-100 text-sm flex items-center gap-2">
-            Scanner de badges
-            <span className="bg-white/20 px-2 py-0.5 rounded text-xs font-medium">
-              {currentDay}
-            </span>
-          </p>
+        <div className="flex items-center gap-3">
+          <img 
+            src="/icon-192.png" 
+            alt="Clinica Logo" 
+            className="w-12 h-12 object-contain"
+          />
+          <div>
+            <h1 className="text-xl font-bold text-white font-display">CLINICA  EXPO 2026</h1>
+            <p className="text-emerald-100 text-sm flex items-center gap-2">
+              Scanner de badges
+              <span className="bg-white/20 px-2 py-0.5 rounded text-xs font-medium">
+                {currentDay}
+              </span>
+            </p>
+          </div>
         </div>
 
         {/* Stats */}
