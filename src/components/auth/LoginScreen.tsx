@@ -43,7 +43,7 @@ export function LoginScreen() {
             <ShieldCheck className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white font-display">CLINICA 2026</h1>
+            <h1 className="text-2xl font-bold text-white font-display">CLINICA  EXPO 2026</h1>
             <p className="text-emerald-100 text-sm">Scanner de badges</p>
           </div>
         </div>

@@ -89,30 +89,32 @@ export function ScanResult({
         {/* Title */}
         <h2 className="text-2xl font-bold mb-2">{title}</h2>
 
-        {/* Visitor Info */}
-        {response?.visitor && (
+        {/* Visitor Info - Show for successful check-ins */}
+        {status === 'success' && response?.visitor && response.visitor.name && (
           <div className="mt-6 bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-sm mx-auto">
             <p className="text-3xl font-bold mb-1">{response.visitor.name}</p>
+            {response.visitor.email && (
+              <p className="text-white/80 text-lg">{response.visitor.email}</p>
+            )}
             {response.visitor.company && (
-              <p className="text-white/80 text-lg">{response.visitor.company}</p>
+              <p className="text-white/60 text-base">{response.visitor.company}</p>
             )}
           </div>
         )}
 
-        {/* Scan Info for duplicate */}
+        {/* Scan Info for duplicate - show previous scan time */}
         {status === 'duplicate' && response?.scanInfo?.previousScanTime && (
-          <p className="mt-4 text-white/80">
-            Scanné à {response.scanInfo.previousScanTime}
-          </p>
+          <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl px-4 py-3">
+            <p className="text-white/90">
+              Scanné le {response.scanInfo.previousScanTime}
+            </p>
+          </div>
         )}
 
-        {/* Day Badge */}
-        {response?.scanInfo?.day && (
+        {/* Status Badge */}
+        {response?.scanInfo?.status && (
           <div className="mt-4 inline-block bg-white/20 px-4 py-2 rounded-full">
-            <span className="font-semibold">{response.scanInfo.day}</span>
-            {response.scanInfo.status && (
-              <span className="ml-2 text-white/80">• {response.scanInfo.status}</span>
-            )}
+            <span className="font-semibold">{response.scanInfo.status}</span>
           </div>
         )}
 

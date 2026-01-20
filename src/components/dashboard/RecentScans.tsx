@@ -1,4 +1,4 @@
-import { CheckCircle, Users } from 'lucide-react';
+import { CheckCircle, Users, Building2, Mail } from 'lucide-react';
 import { formatTime } from '@/lib/utils';
 import type { RecentScan } from '@/lib/api';
 
@@ -55,20 +55,31 @@ export function RecentScans({ scans, isLoading }: RecentScansProps) {
             >
               <div className="min-w-0 flex-1">
                 <p className="font-semibold text-foreground truncate">
-                  {scan.name}
+                  {scan.name || 'Visiteur'}
                 </p>
                 {scan.company && (
-                  <p className="text-sm text-muted-foreground truncate">
-                    {scan.company}
+                  <p className="text-sm text-muted-foreground truncate flex items-center gap-1">
+                    <Building2 className="w-3 h-3 flex-shrink-0" />
+                    <span className="truncate">{scan.company}</span>
+                  </p>
+                )}
+                {!scan.company && scan.email && (
+                  <p className="text-sm text-muted-foreground truncate flex items-center gap-1">
+                    <Mail className="w-3 h-3 flex-shrink-0" />
+                    <span className="truncate">{scan.email}</span>
                   </p>
                 )}
               </div>
               <div className="text-right flex-shrink-0 ml-4">
-                <p className="text-primary text-sm flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4" />
-                  Validé
-                </p>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 justify-end">
+                  {scan.day && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                      {scan.day}
+                    </span>
+                  )}
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {formatTime(scan.timestamp)}
                 </p>
               </div>

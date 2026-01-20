@@ -1,4 +1,4 @@
-# CLINICA 2026 - Scanner de badges
+# CLINICA  EXPO 2026 - Scanner de badges
 
 Application mobile-first pour le check-in des visiteurs lors de CLINICA EXPO 2026.
 

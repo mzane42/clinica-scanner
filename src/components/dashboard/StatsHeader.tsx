@@ -21,7 +21,7 @@ export function StatsHeader({
       <div className="flex items-center justify-between">
         {/* Title */}
         <div>
-          <h1 className="text-xl font-bold text-white font-display">CLINICA 2026</h1>
+          <h1 className="text-xl font-bold text-white font-display">CLINICA  EXPO 2026</h1>
           <p className="text-emerald-100 text-sm flex items-center gap-2">
             Scanner de badges
             <span className="bg-white/20 px-2 py-0.5 rounded text-xs font-medium">

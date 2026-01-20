@@ -57,19 +57,10 @@ export function ScannerPage() {
     setIsProcessing(true);
 
     try {
-      // Parse QR data - could be JSON or plain UUID
-      let id: string;
-      try {
-        const parsed = JSON.parse(decodeURIComponent(data));
-        id = parsed.id || parsed.registrationId || data;
-      } catch {
-        // Assume it's a plain UUID
-        id = data;
-      }
+      // Pass raw QR data directly to API - it handles JSON format
+      const response = await checkinByQR(data);
 
-      const response = await checkinByQR(id);
-
-      if (!response.valid) {
+      if (!response.valid && !response.alreadyToday) {
         setScanResult({ status: 'invalid', response });
       } else if (response.alreadyToday) {
         setScanResult({ status: 'duplicate', response });
